@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_margin="5dp"
+        android:background="@drawable/background_sender_message"
+        android:maxWidth="300dp"
+        android:maxHeight="400dp"
+        android:minHeight="30dp">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide_line_sender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="20dp"/>
+
+        <TextView
+            android:id="@+id/text_view_sender_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:inputType="textLongMessage|textMultiLine"
+            android:maxWidth="250dp"
+            android:minWidth="50dp"
+            android:text="Oui bonjour Monsieur OUEDRAOGO"
+
+            app:layout_constraintEnd_toEndOf="@+id/guide_line_sender"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintVertical_bias="0.0"/>
+
+
+        <TextView
+            android:id="@+id/text_view_sender_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="16:45"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/guide_line_sender"
+            app:layout_constraintTop_toBottomOf="@+id/text_view_sender_message"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</RelativeLayout>
