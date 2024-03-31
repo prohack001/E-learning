@@ -30,7 +30,8 @@
             android:maxWidth="250dp"
             android:minWidth="50dp"
             android:text="Oui bonjour Monsieur OUEDRAOGO"
-
+            android:autoLink="web"
+            android:textColorLink="#FFFFFF"
             app:layout_constraintEnd_toEndOf="@+id/guide_line_sender"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"

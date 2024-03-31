@@ -219,7 +219,7 @@ public class HomeFragment extends Fragment {
                     String nom = snapshot.child("nom").getValue(String.class);
                     String prenom = snapshot.child("prenom").getValue(String.class);
                     String profile = snapshot.child("profile").getValue(String.class);
-                    Mentor mentor = new Mentor(mentorId, nom , prenom, null, null, null, null, profile, null, null, 0, 0);
+                    Mentor mentor = new Mentor(mentorId, nom , prenom, null, null, null, profile,null , null, null, 0, 0);
                     mentorsList.add(mentor);
                 }
                 mentorsAdapter.setMentors(mentorsList);

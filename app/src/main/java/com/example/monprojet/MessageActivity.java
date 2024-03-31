@@ -1,18 +1,30 @@
 package com.example.monprojet;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.monprojet.adapters.ChatAdapter;
 import com.example.monprojet.models.Chat;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textfield.TextInputEditText;
@@ -20,7 +32,6 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
@@ -35,11 +46,14 @@ public class MessageActivity extends AppCompatActivity {
     ImageButton back;
     FirebaseDatabase firebaseDatabase;
     FirebaseAuth auth;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     TextView textViewFirstName, textViewLastName;
     RecyclerView recyclerView;
     ShapeableImageView shapeableImageView;
     CircleImageView circleImageView;
     TextInputLayout textInputLayout;
+
+    private FusedLocationProviderClient fusedLocationClient;
     TextInputEditText textInputEditText;
 
 
@@ -47,6 +61,8 @@ public class MessageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
 
         back = findViewById(R.id.image_button_back_user);
         textViewFirstName = findViewById(R.id.text_view_firstname_user);
@@ -105,6 +121,8 @@ public class MessageActivity extends AppCompatActivity {
 
                             }
                         });
+        findViewById(R.id.getLocationButton).setOnClickListener(v -> getLocation());
+
         circleImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,6 +152,72 @@ public class MessageActivity extends AppCompatActivity {
         });
 
     }
+
+    private void getLocation() {
+
+        checkLocationServices();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            //textInputEditText.setText("2");
+            fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if (location != null) { //
+                        double latitude = location.getLatitude();
+                        double longitude = location.getLongitude();
+                        String url = "https://www.google.com/maps/search/?api=1&query=" + latitude + "," + longitude;
+
+                        textInputEditText.setText(url);
+                        //textInputEditText.setText("test");
+                    }
+                    //textInputEditText.setText("3");
+                }
+            });
+        } else {
+            // Demandez les autorisations de localisation si elles ne sont pas accordées
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+            //textInputEditText.setText("ici");
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // L'autorisation a été accordée, vous pouvez maintenant récupérer la localisation
+                getLocation();
+            } else {
+                // L'autorisation a été refusée, vous pouvez afficher un message ou gérer cette situation selon vos besoins
+            }
+        }
+    }
+
+
+
+    private void checkLocationServices() {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) && !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Activer les services de localisation")
+                    .setMessage("Les services de localisation doivent être activés pour utiliser cette fonctionnalité. Voulez-vous activer les services de localisation ?")
+                    .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            startActivity(intent);
+                        }
+                    })
+                    .setNegativeButton("Non", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // L'utilisateur ne souhaite pas activer les services de localisation, vous pouvez gérer cette situation selon vos besoins
+                        }
+                    })
+                    .show();
+        }
+    }
+
 
 
 }

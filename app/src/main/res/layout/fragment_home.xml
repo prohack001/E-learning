@@ -34,7 +34,6 @@
                 android:id="@+id/shapeable_image_view_profile_home"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:src="@drawable/idrissa"
                 app:strokeWidth="0dp"
                 app:shapeAppearanceOverlay="@style/CircleImageViewOverlay"
                 android:scaleType="centerCrop"
@@ -78,7 +77,8 @@
                         android:layout_height="wrap_content"
                         android:textStyle="bold"
                         android:layout_marginRight="10dp"
-                        android:text="Idrissa"/>
+                        android:textColor="@color/white"
+                        android:text="chargement"/>
 
                     <TextView
                         android:id="@+id/text_view_lastname_home"
@@ -86,7 +86,8 @@
                         android:layout_height="wrap_content"
                         android:textAllCaps="true"
                         android:textStyle="bold"
-                        android:text="OUEDRAOGO"/>
+                        android:textColor="@color/white"
+                        android:text="..."/>
                 </LinearLayout>
 
             </LinearLayout>

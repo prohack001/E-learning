@@ -69,7 +69,6 @@
         android:layout_below="@id/app_bar_layout_profile"
         android:layout_marginTop="18dp"
         android:background="@color/cyan"
-        android:src="@drawable/idrissa"
         android:scaleType="centerCrop"
         app:shapeAppearanceOverlay="@style/CircleImageViewOverlay" />
 

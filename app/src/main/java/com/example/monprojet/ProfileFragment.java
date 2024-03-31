@@ -7,6 +7,7 @@ import static utils.FirebaseUtil.currentUserId;
 import static utils.FirebaseUtil.database;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -48,6 +49,7 @@ import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import utils.FirebaseUtil;
 
@@ -215,9 +217,19 @@ public class ProfileFragment extends Fragment {
         logoutTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                startActivity(intent);
-                getActivity().finish();
+                new AlertDialog.Builder(getContext())
+                        .setTitle("Deconnexion")
+                        .setMessage("Etes vous sur de vouloir vous deconnecter?")
+                        .setPositiveButton("oui", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(getActivity(), MainActivity.class);
+                                startActivity(intent);
+                                getActivity().finish();
+                            }
+                        }).setNegativeButton("non",null)
+                        .show();
+
             }
         });
 
@@ -254,7 +266,7 @@ public class ProfileFragment extends Fragment {
         if (resultCode == RESULT_OK && data != null) {
             Uri uri = data.getData();
             imageView.setImageURI(uri);
-            uploadImageToFirebaseStorage(uri, "profil");
+            uploadImageToFirebaseStorage(uri, UUID.randomUUID().toString());
         }
     }
 
@@ -268,25 +280,35 @@ public class ProfileFragment extends Fragment {
         deleteAccountBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if ( currentUser !=null){
-                    // Supprimer les données du compte utilisateur dans Firebase Realtime Database
-                    String userId = currentUser.getUid();
-                    FirebaseDatabase.getInstance().getReference("Users").child(userId).removeValue().addOnSuccessListener(aVoid -> {
-                        // Supprimer le compte utilisateur dans Firebase Authentication
-                        currentUser .delete().addOnSuccessListener(aVoid1 -> {
-                            Toast.makeText(getContext(), "Compte supprimé avec succès", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(getActivity(), MainActivity.class);
-                            startActivity(intent);
-                            getActivity().finish();
-                        }).addOnFailureListener(e -> {
-                            Toast.makeText(getContext(), "Échec de la suppression du compte", Toast.LENGTH_SHORT).show();
-                        });
-                    }).addOnFailureListener(e -> {
-                        Toast.makeText(getContext(), "Échec de la suppression des données du compte", Toast.LENGTH_SHORT).show();
-                    });
-                } else{
-                    Toast.makeText(getContext(), "Aucun utilisateur connecté", Toast.LENGTH_SHORT).show();
-                }
+                new AlertDialog.Builder(getContext())
+                        .setTitle("Suppression")
+                        .setMessage("Etes vous sur de vouloir supprimer votre compte?")
+                        .setPositiveButton("oui", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if ( currentUser !=null){
+                                    // Supprimer les données du compte utilisateur dans Firebase Realtime Database
+                                    String userId = currentUser.getUid();
+                                    FirebaseDatabase.getInstance().getReference("Users").child(userId).removeValue().addOnSuccessListener(aVoid -> {
+                                        // Supprimer le compte utilisateur dans Firebase Authentication
+                                        currentUser .delete().addOnSuccessListener(aVoid1 -> {
+                                            Toast.makeText(getContext(), "Compte supprimé avec succès", Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(getActivity(), MainActivity.class);
+                                            startActivity(intent);
+                                            getActivity().finish();
+                                        }).addOnFailureListener(e -> {
+                                            Toast.makeText(getContext(), "Échec de la suppression du compte", Toast.LENGTH_SHORT).show();
+                                        });
+                                    }).addOnFailureListener(e -> {
+                                        Toast.makeText(getContext(), "Échec de la suppression des données du compte", Toast.LENGTH_SHORT).show();
+                                    });
+                                } else{
+                                    Toast.makeText(getContext(), "Aucun utilisateur connecté", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }).setNegativeButton("non",null)
+                        .show();
+
             }
         });
 
